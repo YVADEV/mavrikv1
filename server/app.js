@@ -67,10 +67,19 @@ app.use((err, req, res, next) => {
 // MongoDB connection
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGODB_URI, {
+        const uri = process.env.MONGODB_URI;
+        
+        if (!uri) {
+            throw new Error('MONGODB_URI is not defined in the environment variables');
+        }
+
+        console.log('Attempting to connect with URI:', uri); // For debugging
+
+        await mongoose.connect(uri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
+
         console.log('MongoDB connected successfully');
     } catch (error) {
         console.error('MongoDB connection error:', error);
@@ -83,3 +92,12 @@ connectDB();
 mongoose.connect(CONNECTION_URL)
     .then(() => app.listen(PORT, () => console.log('listening at port ' + PORT)))
     .catch((err) => console.log('error in connection with mongoDB = \n', err))
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+    await client.close();
+    console.log('MongoDB connection closed');
+    process.exit(0);
+});
+
+console.log('All environment variables:', process.env);
