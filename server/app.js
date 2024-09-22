@@ -26,12 +26,7 @@ import inventoryRoutes from './routes/inventory.js'
 
 dotenv.config()
 const app = express()
-const CONNECTION_URL = process.env.ATLAS_URL
-// const CONNECTION_URL = process.env.COMPASS_URL
-
-const PORT = process.env.PORT || 4000
-app.use(cors())
-app.use(express.json())
+const port = process.env.PORT || 3000
 
 // serving static files | images
 const __filename = fileURLToPath(import.meta.url);
@@ -73,13 +68,9 @@ const connectDB = async () => {
             throw new Error('MONGODB_URI is not defined in the environment variables');
         }
 
-        console.log('Attempting to connect with URI:', uri); // For debugging
+        console.log('Attempting to connect with URI:', uri);
 
-        await mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-
+        await mongoose.connect(uri);
         console.log('MongoDB connected successfully');
     } catch (error) {
         console.error('MongoDB connection error:', error);
@@ -89,15 +80,4 @@ const connectDB = async () => {
 
 connectDB();
 
-mongoose.connect(CONNECTION_URL)
-    .then(() => app.listen(PORT, () => console.log('listening at port ' + PORT)))
-    .catch((err) => console.log('error in connection with mongoDB = \n', err))
-
-// Graceful shutdown
-process.on('SIGINT', async () => {
-    await client.close();
-    console.log('MongoDB connection closed');
-    process.exit(0);
-});
-
-console.log('All environment variables:', process.env);
+// Rest of server code...
