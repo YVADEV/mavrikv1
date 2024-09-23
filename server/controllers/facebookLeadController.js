@@ -8,6 +8,7 @@ export const createFacebookLead = async (req, res) => {
             name: leadData.name,
             email: leadData.email,
             phone: leadData.phone,
+            question: leadData.question,
             facebookAdId: leadData.ad_id,
             facebookFormId: leadData.form_id,
             rawData: leadData
